@@ -1,0 +1,36 @@
+{
+  "903938526": {
+    "interviews": [
+      {
+        "id": 1,
+        "date": "2026-03-31 20:17:35",
+        "level": "Middle",
+        "total_questions": 10,
+        "total_score": 10,
+        "max_score": 100,
+        "percentage": 10.0,
+        "answers": []
+      },
+      {
+        "id": 2,
+        "date": "2026-03-31 20:22:37",
+        "level": "Junior",
+        "total_questions": 10,
+        "total_score": 2,
+        "max_score": 100,
+        "percentage": 2.0,
+        "answers": []
+      },
+      {
+        "id": 3,
+        "date": "2026-03-31 20:26:27",
+        "level": "Middle",
+        "total_questions": 10,
+        "total_score": 4,
+        "max_score": 100,
+        "percentage": 4.0,
+        "answers": []
+      }
+    ]
+  }
+}

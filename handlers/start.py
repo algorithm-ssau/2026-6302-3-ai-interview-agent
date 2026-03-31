@@ -49,3 +49,35 @@ async def help_command(message: Message):
         help_text,
         parse_mode="Markdown"
     )
+
+
+@router.message(Command("stats"))
+async def stats_command(message: Message):
+    """Показывает статистику интервью"""
+    from services.stats_service import load_stats
+    
+    stats = load_stats(message.from_user.id)
+    
+    if not stats or "interviews" not in stats or not stats["interviews"]:
+        await message.answer(
+            "📊 *Статистика*\n\n"
+            "У вас пока нет завершенных интервью.\n"
+            "Пройдите интервью с помощью /start!",
+            parse_mode="Markdown"
+        )
+        return
+    
+    interviews = stats["interviews"]
+    total = len(interviews)
+    avg_percentage = sum(i["percentage"] for i in interviews) / total
+    
+    result = f"📊 *Ваша статистика*\n\n"
+    result += f"*Всего интервью:* {total}\n"
+    result += f"*Средний результат:* {avg_percentage:.1f}%\n\n"
+    result += f"*Последние интервью:*\n"
+    
+    for i in interviews[-3:]:
+        emoji = "🟢" if i["percentage"] >= 80 else "🟡" if i["percentage"] >= 60 else "🔴"
+        result += f"{emoji} {i['date'][:10]} | {i['level']} | {i['total_score']}/{i['max_score']} ({i['percentage']}%)\n"
+    
+    await message.answer(result, parse_mode="Markdown")

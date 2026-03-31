@@ -14,6 +14,7 @@ from services.speech_service import transcribe_audio
 from services.ai_service import evaluate_answer
 from services.gigachat_auth import get_access_token
 from config.settings import GIGACHAT_CLIENT_ID, GIGACHAT_CLIENT_SECRET
+from services.stats_service import add_interview_result
 
 router = Router()
 
@@ -148,6 +149,16 @@ async def handle_voice(message: Message, state: FSMContext):
             final_score = total_score
         max_score = total_questions * 10
         percentage = (final_score / max_score) * 100
+
+        answers_list = []  
+        add_interview_result(
+            user_id=message.from_user.id,
+            level=data.get("level", "Unknown"),
+            total_questions=total_questions,
+            total_score=final_score,
+            max_score=max_score,
+            answers=answers_list
+        )
         
         summary = f"""
 🎉 Интервью завершено! 🎉
@@ -167,3 +178,4 @@ async def handle_voice(message: Message, state: FSMContext):
 """
         await message.answer(summary)
         await state.clear()
+    
