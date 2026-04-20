@@ -7,16 +7,17 @@ from aiogram import F
 from keyboards.level_keyboard import level_keyboard
 from keyboards.end_keyboard import end_interview_keyboard
 from states.interview_states import InterviewState
+from keyboards.topic_keyboard import topic_keyboard
 
 router = Router()
 
 @router.message(Command("start"))
 async def start(message: Message, state: FSMContext):
-    await state.set_state(InterviewState.choosing_level)
-
+    await state.set_state(InterviewState.choosing_topic)
     await message.answer(
-        "Привет! Я AI-интервьюер 🚀\nВыбери уровень:",
-        reply_markup=level_keyboard()
+        "🚀 Привет! Я AI-интервьюер\n\n"
+        "Выберите тему для интервью:",
+        reply_markup=topic_keyboard()
     )
 
 @router.message(Command("help"))

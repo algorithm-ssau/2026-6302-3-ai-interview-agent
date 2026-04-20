@@ -1,44 +1,75 @@
+# Новая структура: тема → уровень → список вопросов (по 2 вопроса для теста)
 QUESTIONS = {
-    "Junior": [
-        "Что такое Dependency Injection?",
-        "Что такое REST API?",
-        "Чем отличается GET от POST?",
-        "Что такое ООП? Назовите 3 принципа.",
-        "Что такое SQL инъекция? Как защититься?",
-        "Чем отличается List от Set в Java/Python?",
-        "Что такое Git и зачем он нужен?",
-        "Что такое JWT токен?",
-        "Что такое Docker?",
-        "Чем отличается HTTP от HTTPS?"
-    ],
-    "Middle": [
-        "Как работает Spring Boot Auto Configuration?",
-        "Что такое транзакции? ACID?",
-        "Как работает сборщик мусора в Java/Python?",
-        "Что такое индексы в БД? Когда использовать?",
-        "Чем отличается JOIN от LEFT JOIN?",
-        "Что такое Redis и для чего используют?",
-        "Как работает JWT верификация?",
-        "Что такое многопоточность? Проблемы?",
-        "Что такое SOLID? Назовите каждый принцип.",
-        "Как отличить N+1 проблему в ORM?"
-    ],
-    "Senior": [
-        "Что такое CAP theorem?",
-        "Как спроектировать high-load систему?",
-        "Что такое Event Sourcing?",
-        "Что такое CQRS?",
-        "Как обеспечить согласованность данных в микросервисах?",
-        "Что такое Circuit Breaker?",
-        "Как бы вы мигрировали монолит в микросервисы?",
-        "Что такое Sharding и партиционирование?",
-        "Как отлаживать продакшен падение производительности?",
-        "Что такое RAFT или Paxos?"
-    ]
+    "Python": {
+        "Junior": [
+            "Что такое PEP8?",
+            "Чем отличается list от tuple?"
+        ],
+        "Middle": [
+            "Как работает сборщик мусора в Python?",
+            "Что такое asyncio?"
+        ],
+        "Senior": [
+            "Как устроен интерпретатор CPython?",
+            "Что такое GIL-free Python?"
+        ]
+    },
+    "Java": {
+        "Junior": [
+            "Что такое JVM?",
+            "Чем отличается `==` от `equals()`?"
+        ],
+        "Middle": [
+            "Как работает сборщик мусора в Java?",
+            "Что такое Stream API?"
+        ],
+        "Senior": [
+            "Как работает загрузка классов в Java?",
+            "Что такое Java Memory Model?"
+        ]
+    },
+    "SQL": {
+        "Junior": [
+            "Что такое JOIN?",
+            "Чем отличается INNER JOIN от LEFT JOIN?"
+        ],
+        "Middle": [
+            "Что такое транзакции и ACID?",
+            "Что такое оконные функции?"
+        ],
+        "Senior": [
+            "Что такое шардирование и партиционирование?",
+            "Что такое CAP теорема?"
+        ]
+    },
+    "Git": {
+        "Junior": [
+            "Что такое Git?",
+            "Чем отличается git pull от git fetch?"
+        ],
+        "Middle": [
+            "Чем отличается rebase от merge?",
+            "Что такое cherry-pick?"
+        ],
+        "Senior": [
+            "Как настроить CI/CD с Git?",
+            "Что такое Git hooks?"
+        ]
+    }
 }
 
-def get_questions(level):
-    return QUESTIONS.get(level, [])
+def get_topics():
+    """Возвращает список доступных тем"""
+    return list(QUESTIONS.keys())
 
-def get_next_question(questions, index):
+def get_levels_for_topic(topic: str):
+    """Возвращает список уровней для темы"""
+    return list(QUESTIONS.get(topic, {}).keys())
+
+def get_questions(topic: str, level: str):
+    """Возвращает вопросы для темы и уровня"""
+    return QUESTIONS.get(topic, {}).get(level, [])
+
+def get_next_question(questions: list, index: int):
+    """Возвращает следующий вопрос по индексу"""
     return questions[index] if index < len(questions) else None

@@ -17,8 +17,27 @@ from services.ai_service import evaluate_answer
 from services.gigachat_auth import get_access_token
 from config.settings import GIGACHAT_CLIENT_ID, GIGACHAT_CLIENT_SECRET
 from services.stats_service import add_interview_result
+from services.interview_service import get_questions, get_next_question, get_levels_for_topic, get_topics
+from keyboards.topic_keyboard import topic_keyboard
+from keyboards.level_keyboard import level_keyboard
 
 router = Router()
+
+@router.message(InterviewState.choosing_topic)
+async def choose_topic(message: Message, state: FSMContext):
+    topic = message.text.replace("🐍 ", "").replace("☕ ", "").replace("🗄 ", "").replace("📦 ", "")
+    
+    if topic not in get_topics():
+        await message.answer("Выберите тему, нажав одну из кнопок ниже:", reply_markup=topic_keyboard())
+        return
+    
+    await state.update_data(topic=topic)
+    await state.set_state(InterviewState.choosing_level)
+    
+    await message.answer(
+        f"Вы выбрали тему: {topic}\n\nВыберите уровень сложности:",
+        reply_markup=level_keyboard()
+    )
 
 @router.callback_query(F.data == "skip_question")
 async def skip_question(callback: CallbackQuery, state: FSMContext):
@@ -70,7 +89,20 @@ async def skip_question(callback: CallbackQuery, state: FSMContext):
 @router.message(InterviewState.choosing_level)
 async def choose_level(message: Message, state: FSMContext):
     level = message.text
-    questions = get_questions(level)
+    data = await state.get_data()
+    topic = data.get("topic")
+    
+    if not topic:
+        await state.set_state(InterviewState.choosing_topic)
+        await message.answer("Сначала выберите тему:", reply_markup=topic_keyboard())
+        return
+    
+    questions = get_questions(topic, level)
+    
+    if not questions:
+        await message.answer(f"Нет вопросов для {topic} - {level}. Попробуйте другой уровень.")
+        return
+    
     total_questions = len(questions)
 
     await state.update_data(
@@ -82,13 +114,13 @@ async def choose_level(message: Message, state: FSMContext):
 
     await state.set_state(InterviewState.answering)
 
-    # Меняем клавиатуру внизу (текст не пустой!)
     await message.answer(
         "✅ Интервью активно! Для ответа пришлите голосовое сообщение🎤",
         reply_markup=end_interview_keyboard()
     )
 
     await message.answer(
+        f"📋 Тема: {topic} | Уровень: {level}\n"
         f"📋 Всего вопросов: {total_questions}\n\n"
         f"Вопрос 1 из {total_questions}:\n{questions[0]}",
         reply_markup=skip_button()
@@ -150,7 +182,6 @@ async def handle_voice(message: Message, state: FSMContext):
             reply_markup=skip_button()
         )
     else:
-        # Интервью завершено - показываем итоговый результат
         final_score = data.get("total_score", 0)
         if score_match:
             final_score = total_score
