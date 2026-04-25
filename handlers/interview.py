@@ -90,7 +90,7 @@ async def choose_mode(message: Message, state: FSMContext):
     )
 
     await message.answer(
-        f"📋 Вопрос 1:\n{questions[0]}",
+        f"📋 Вопрос 1/{len(questions)}:\n{questions[0]}",
         reply_markup=skip_button()
     )
 
@@ -294,7 +294,7 @@ async def go_next_question(message: Message, state: FSMContext, question_id: int
 
     await message.answer(
         f"📊 Переход к следующему вопросу\n\n"
-        f"Вопрос {new_index + 1}:\n{next_q}",
+        f"Вопрос {new_index + 1}/{total_questions}:\n{next_q}",
         reply_markup=skip_button()
     )
 
