@@ -96,3 +96,20 @@ async def stats_command(message: Message):
             photo=photo,
             caption="📊 График твоего прогресса"
         )
+
+@router.message(Command("about"))
+async def about_command(message: Message):
+    """Информация о боте"""
+    await message.answer(
+        "🤖 *AI Интервьюер*\n\n"
+        "Версия: 1.0.0\n"
+        "Авторы: Команда 2026-6302-5\n\n"
+        "Бот помогает тренировать навыки "
+        "прохождения технических интервью.\n\n"
+        "Команды:\n"
+        "/start - начать интервью\n"
+        "/stats - статистика\n"
+        "/help - помощь\n"
+        "/about - о боте",
+        parse_mode="Markdown"
+    )
