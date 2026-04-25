@@ -1,5 +1,8 @@
 import asyncio
 from aiogram import Bot, Dispatcher
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message, ReplyKeyboardRemove, FSInputFile
 
 from config.settings import BOT_TOKEN
 from handlers import start, interview
